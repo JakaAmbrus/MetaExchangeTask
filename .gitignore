@@ -396,3 +396,10 @@ FodyWeavers.xsd
 
 # JetBrains Rider
 *.sln.iml
+
+# Visual Studio specific
+.vs/
+MetaExchange.sln
+
+**/bin/
+**/obj/
