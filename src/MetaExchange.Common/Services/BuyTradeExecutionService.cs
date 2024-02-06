@@ -33,21 +33,21 @@ namespace MetaExchange.Common.Services
             decimal amountTracker = requestedBTCAmount;
             decimal totalCostEUR = 0;
 
-            var sortedBids = exchanges.SelectMany(exchange => exchange.OrderBook.Bids.Select(bid => new { Exchange = exchange.Identifier, Bid = bid })) // give each bid an exchange identifier
-                    .OrderBy(bid => bid.Bid.Price).ToList();
+            var sortedAsks = exchanges.SelectMany(exchange => exchange.OrderBook.Asks.Select(ask => new { Exchange = exchange.Identifier, Ask = ask })) // give each bid an exchange identifier
+                    .OrderBy(ask => ask.Ask.Price).ToList();
 
-            foreach (var bid in sortedBids)
+            foreach (var ask in sortedAsks)
             {
                 if (amountTracker == 0)
                 {
                     break; // Order fulfilled
                 }
 
-                var exchange = exchanges.First(e => e.Identifier == bid.Exchange);
+                var exchange = exchanges.First(e => e.Identifier == ask.Exchange);
 
-                var affordableBTC = exchange.Balances.EUR / bid.Bid.Price; // checks how much BTC can be bought with the available EUR balance of the exchange
-                var maxBTC = Math.Min(amountTracker, Math.Min(bid.Bid.Amount, affordableBTC));
-                var costEUR = maxBTC * bid.Bid.Price;
+                var affordableBTC = exchange.Balances.EUR / ask.Ask.Price; // checks how much BTC can be bought with the available EUR balance of the exchange
+                var maxBTC = Math.Min(amountTracker, Math.Min(ask.Ask.Amount, affordableBTC));
+                var costEUR = maxBTC * ask.Ask.Price;
 
                 if (costEUR <= exchange.Balances.EUR && maxBTC > 0)
                 {
@@ -62,7 +62,7 @@ namespace MetaExchange.Common.Services
                         Exchange = exchange.Identifier,
                         Action = "Buy",
                         RequestedBTCAmount = maxBTC,
-                        PricePerBTC = bid.Bid.Price,
+                        PricePerBTC = ask.Ask.Price,
                         TotalCostEUR = costEUR
                     });
 
