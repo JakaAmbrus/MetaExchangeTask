@@ -118,7 +118,7 @@
 
             // Assert
             result.Success.Should().BeTrue();
-            result.Summary.BTCAcquired.Should().Be(amountBTC);
+            result.Summary.BTCVolume.Should().Be(amountBTC);
         }
 
         [Fact]
@@ -214,8 +214,8 @@
             result.Success.Should().BeTrue();
             result.Execution.Should().HaveCount(2);
             result.Summary.AverageBTCPrice.Should().Be(correctTotalCost / amountBTC); // not rounded
-            result.Summary.BTCAcquired.Should().Be(amountBTC);
-            result.Summary.TotalEURCost.Should().Be(correctTotalCostRounded);
+            result.Summary.BTCVolume.Should().Be(amountBTC);
+            result.Summary.TotalEUR.Should().Be(correctTotalCostRounded);
         }
 
         [Fact]
@@ -259,7 +259,7 @@
 
             // Assert
             result.Success.Should().BeTrue();
-            result.Summary.BTCAcquired.Should().Be(amountBTC);
+            result.Summary.BTCVolume.Should().Be(amountBTC);
             result.Execution.Should().HaveCount(1);
             result.Execution[0].Exchange.Should().Be("Exchange A");
             result.Execution[0].PricePerBTC.Should().Be(9000m);
@@ -348,7 +348,7 @@
 
             // Assert
             result.Success.Should().BeTrue();
-            result.Summary.BTCAcquired.Should().Be(amountBTC);
+            result.Summary.BTCVolume.Should().Be(amountBTC);
             result.Execution.Should().HaveCount(1);
             result.Execution[0].Exchange.Should().Be("Exchange A");
             result.Execution[0].PricePerBTC.Should().Be(9000m);
@@ -411,7 +411,7 @@
 
             // Assert
             result.Success.Should().BeTrue();
-            result.Summary.BTCAcquired.Should().Be(amountBTC);
+            result.Summary.BTCVolume.Should().Be(amountBTC);
             result.Execution.Should().HaveCount(1);
             result.Execution[0].Exchange.Should().Be("Exchange B");
             result.Execution[0].PricePerBTC.Should().Be(9000m);
@@ -474,7 +474,7 @@
 
             // Assert
             result.Success.Should().BeTrue();
-            result.Summary.BTCAcquired.Should().Be(amountBTC);
+            result.Summary.BTCVolume.Should().Be(amountBTC);
             result.Execution.Should().HaveCount(2);
             result.Execution[0].Exchange.Should().Be("Exchange B");
             result.Execution[0].PricePerBTC.Should().Be(9000m);
@@ -482,7 +482,7 @@
             result.Execution[1].Exchange.Should().Be("Exchange A");
             result.Execution[1].PricePerBTC.Should().Be(10000m);
             result.Execution[1].TotalCostEUR.Should().Be(5000m);
-            result.Summary.TotalEURCost.Should().Be(14000m); // 9000 + 5000
+            result.Summary.TotalEUR.Should().Be(14000m); // 9000 + 5000
         }
 
         [Fact]
@@ -538,9 +538,9 @@
 
             // Assert
             result.Success.Should().BeTrue();
-            result.Summary.BTCAcquired.Should().Be(amountBTC);
+            result.Summary.BTCVolume.Should().Be(amountBTC);
             result.Execution.Should().HaveCount(4);
-            result.Summary.TotalEURCost.Should().Be(7600m);
+            result.Summary.TotalEUR.Should().Be(7600m);
         }
         [Fact]
         public void ExecuteBuyOrder_ShouldHaveTheRightExchangeOrder_WhenTheBestOrdersChangeBetweenExchanges()
@@ -604,7 +604,7 @@
 
             // Assert
             result.Success.Should().BeTrue();
-            result.Summary.BTCAcquired.Should().Be(amountBTC);
+            result.Summary.BTCVolume.Should().Be(amountBTC);
             result.Execution.Should().HaveCount(3);
             result.Execution[0].Exchange.Should().Be("Exchange A");
             result.Execution[1].Exchange.Should().Be("Exchange B");
@@ -685,7 +685,7 @@
             // Assert
             result.Success.Should().BeFalse();
             result.ErrorMessage.Should().Be("Could only fulfill the order partially. only 1.0BTC acquired.");
-            result.Summary.BTCAcquired.Should().Be(1.0m);
+            result.Summary.BTCVolume.Should().Be(1.0m);
         }
 
         [Fact]
@@ -782,7 +782,7 @@
 
             // Assert
             result.Success.Should().BeTrue();
-            result.Summary.BTCAcquired.Should().Be(amountBTC);
+            result.Summary.BTCVolume.Should().Be(amountBTC);
             result.Execution.Should().HaveCount(2);
             result.Execution[0].Exchange.Should().Be("Exchange A");
             result.Execution[0].RequestedBTCAmount.Should().Be(1m);

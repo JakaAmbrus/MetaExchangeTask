@@ -106,7 +106,7 @@
             {
                 new Exchange
                 {
-                    Identifier = "Exchange1",
+                    Identifier = "Exchange A",
                     Balances = new Balances
                     {
                         BTC = 1.0m,
@@ -118,7 +118,7 @@
                         {
                             new Order
                             {
-                                Type = "Bid",
+                                Type = "Buy",
                                 Amount = 1.0m,
                                 Price = 1000.0m
                             }
@@ -132,12 +132,49 @@
 
             // Assert
             result.Success.Should().BeTrue();
+            result.Summary.BTCVolume.Should().Be(amountBTC);
+        }
+
+        [Fact]
+        public void ExecuteSellOrder_ShouldReturnExecutionTradeDetails_WhenTheConditionsAreMet()
+        {
+            // Arrange
+            var amountBTC = 1.0m;
+            var exchanges = new List<Exchange>
+            {
+                new Exchange
+                {
+                    Identifier = "Exchange A",
+                    Balances = new Balances
+                    {
+                        BTC = 1.0m,
+                        EUR = 10000m
+                    },
+                    OrderBook = new OrderBook
+                    {
+                        Bids = new List<Order>
+                        {
+                            new Order
+                            {
+                                Type = "Buy",
+                                Amount = 1.0m,
+                                Price = 10000m
+                            }
+                        }
+                    }
+                }
+            };
+
+            // Act
+            var result = _sellTradeExecutionService.ExecuteSellOrder(amountBTC, exchanges);
+
+            // Assert
             result.Execution.Should().HaveCount(1);
-            result.Execution.First().Exchange.Should().Be("Exchange1");
-            result.Execution.First().Action.Should().Be("Sell");
-            result.Execution.First().RequestedBTCAmount.Should().Be(amountBTC);
-            result.Execution.First().PricePerBTC.Should().Be(1000.0m);
-            result.Execution.First().TotalCostEUR.Should().Be(1000.0m);
+            result.Execution[0].Exchange.Should().Be("Exchange A");
+            result.Execution[0].Action.Should().Be("Sell");
+            result.Execution[0].RequestedBTCAmount.Should().Be(amountBTC);
+            result.Execution[0].PricePerBTC.Should().Be(10000m);
+            result.Execution[0].TotalCostEUR.Should().Be(10000m);
         }
     }
 }

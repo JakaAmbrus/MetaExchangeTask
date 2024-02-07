@@ -13,7 +13,7 @@ namespace MetaExchange.Common.Services
                 OrderType = "Buy",
                 RequestedBTC = requestedBTCAmount,
                 Execution = new List<TradeDetails>(),
-                Summary = new Summary { BTCAcquired = 0, TotalEURCost = 0 },
+                Summary = new Summary { BTCVolume = 0, TotalEUR = 0 },
                 Success = false,
                 ErrorMessage = ""
             };
@@ -80,9 +80,9 @@ namespace MetaExchange.Common.Services
             }
 
             // Summary
-            tradeResult.Summary.BTCAcquired = requestedBTCAmount - amountTracker;
-            tradeResult.Summary.TotalEURCost = Math.Round(totalCostEUR, 2);
-            tradeResult.Summary.AverageBTCPrice = tradeResult.Summary.BTCAcquired > 0 ? totalCostEUR / tradeResult.Summary.BTCAcquired : 0;
+            tradeResult.Summary.BTCVolume = requestedBTCAmount - amountTracker;
+            tradeResult.Summary.TotalEUR = Math.Round(totalCostEUR, 2);
+            tradeResult.Summary.AverageBTCPrice = tradeResult.Summary.BTCVolume > 0 ? totalCostEUR / tradeResult.Summary.BTCVolume : 0;
 
             if (amountTracker > 0)
             {
@@ -95,7 +95,7 @@ namespace MetaExchange.Common.Services
                 {
                     // Partial success, some changes made, but could not fulfill the entire order
                     tradeResult.Success = false;
-                    tradeResult.ErrorMessage = $"Could only fulfill the order partially. only {tradeResult.Summary.BTCAcquired}BTC acquired.";
+                    tradeResult.ErrorMessage = $"Could only fulfill the order partially. only {tradeResult.Summary.BTCVolume}BTC acquired.";
                 }
             }
 

@@ -14,7 +14,7 @@ namespace MetaExchange.Common.Services
                 OrderType = "Sell",
                 RequestedBTC = amountBTC,
                 Execution = new List<TradeDetails>(),
-                Summary = new Summary { BTCAcquired = 0, TotalEURCost = 0 },
+                Summary = new Summary { BTCVolume = 0, TotalEUR = 0 },
                 Success = false,
                 ErrorMessage = ""
             };
@@ -34,8 +34,17 @@ namespace MetaExchange.Common.Services
             decimal amountTracker = amountBTC; // just like in the buy order, this variable will keep track of the amount of BTC left to sell
             decimal totalReceivedEUR = 0;
 
-            var sortedBids = exchanges.SelectMany(exchange => exchange.OrderBook.Bids.Select(bid => new { Exchange = exchange.Identifier, Bid = bid }))
-                .OrderByDescending(bid => bid.Bid.Price).ToList(); // sort the bids by price in descending order unlike the asks in the buy order
+            var sortedBids = exchanges
+              .Where(exchange => exchange.OrderBook?.Bids != null && exchange.OrderBook.Bids.Any())
+              .SelectMany(exchange => exchange.OrderBook.Bids.Select(bid => new { Exchange = exchange.Identifier, Bid = bid }))
+              .OrderByDescending(bid => bid.Bid.Price)
+              .ToList();
+
+            if (!sortedBids.Any())
+            {
+                tradeResult.ErrorMessage = "No bids available.";
+                return tradeResult;
+            }
 
             foreach (var bid in sortedBids)
             {
@@ -69,9 +78,9 @@ namespace MetaExchange.Common.Services
                 }
             }
 
-            tradeResult.Summary.BTCAcquired = amountBTC - amountTracker;
-            tradeResult.Summary.TotalEURCost = Math.Round(totalReceivedEUR, 2);
-            tradeResult.Summary.AverageBTCPrice = tradeResult.Summary.BTCAcquired > 0 ? totalReceivedEUR / tradeResult.Summary.BTCAcquired : 0;
+            tradeResult.Summary.BTCVolume = amountBTC - amountTracker;
+            tradeResult.Summary.TotalEUR = Math.Round(totalReceivedEUR, 2);
+            tradeResult.Summary.AverageBTCPrice = tradeResult.Summary.BTCVolume > 0 ? totalReceivedEUR / tradeResult.Summary.BTCVolume : 0;
 
             if (amountTracker > 0)
             {
@@ -83,7 +92,7 @@ namespace MetaExchange.Common.Services
                 else
                 {
                     tradeResult.Success = false;
-                    tradeResult.ErrorMessage = $"Could only fulfill the order partially. only {tradeResult.Summary.BTCAcquired}BTC sold.";
+                    tradeResult.ErrorMessage = $"Could only fulfill the order partially. only {tradeResult.Summary.BTCVolume}BTC sold.";
                 }
             }
 
