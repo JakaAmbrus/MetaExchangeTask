@@ -15,10 +15,11 @@
     <ProjectReference Include="..\MetaExchange.Common\MetaExchange.Common.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <None Update="Data\DB.json">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-  </ItemGroup>
+    <ItemGroup>
+		<Content Include="..\MetaExchange.Common\Data\DB.json">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+			<Link>Data\DB.json</Link>
+		</Content>
+	</ItemGroup>
 
 </Project>
