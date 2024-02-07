@@ -267,6 +267,95 @@
         }
 
         [Fact]
+        public void ExecuteBuyOrder_ShouldIgnoreOrdersOfSellType_WhenThereAreNoAsks()
+        {
+            // Arrange
+            var amountBTC = 1.0m;
+            var exchanges = new List<Exchange>
+            {
+                new Exchange
+                {
+                    Identifier = "Exchange A",
+                    Balances = new Balances
+                    {
+                        BTC = 1.0m,
+                        EUR = 10000m
+                    },
+                    OrderBook = new OrderBook
+                    {
+                        Bids = new List<Order>
+                        {
+                            new Order
+                            {
+                                Type = "Sell",
+                                Price = 10000m,
+                                Amount = 1.0m
+                            }
+                        }
+                    }
+                }
+            };
+
+            // Act
+            var result = _buyTradeExecutionService.ExecuteBuyOrder(amountBTC, exchanges);
+
+            // Assert
+            result.Success.Should().BeFalse();
+            result.ErrorMessage.Should().Be("No asks available.");
+        }
+
+        [Fact]
+        public void ExecuteBuyOrder_ShouldIgnoreOrdersOfSellTypeAndBuyCorrectAmount_WhenThereAreBidsAndAsks()
+        {
+            // Arrange
+            var amountBTC = 1.0m;
+            var exchanges = new List<Exchange>
+            {
+                new Exchange
+                {
+                    Identifier = "Exchange A",
+                    Balances = new Balances
+                    {
+                        BTC = 1.0m,
+                        EUR = 10000m
+                    },
+                    OrderBook = new OrderBook
+                    {
+                        Bids = new List<Order>
+                        {
+                            new Order
+                            {
+                                Type = "Buy",
+                                Price = 10000m,
+                                Amount = 1.0m
+                            }
+                        },
+                        Asks = new List<Order>
+                        {
+                            new Order
+                            {
+                                Type = "Sell",
+                                Price = 9000m,
+                                Amount = 1.0m
+                            }
+                        }
+                    }
+                }
+            };
+
+            // Act
+            var result = _buyTradeExecutionService.ExecuteBuyOrder(amountBTC, exchanges);
+
+            // Assert
+            result.Success.Should().BeTrue();
+            result.Summary.BTCAcquired.Should().Be(amountBTC);
+            result.Execution.Should().HaveCount(1);
+            result.Execution[0].Exchange.Should().Be("Exchange A");
+            result.Execution[0].PricePerBTC.Should().Be(9000m);
+            result.Execution[0].TotalCostEUR.Should().Be(9000m);
+        }
+
+        [Fact]
         public void ExecuteBuyOrder_ShouldBuyTheBestOffers_WhenThereIsBetterPriceOnAnotherExchange()
         {
             // Arrange

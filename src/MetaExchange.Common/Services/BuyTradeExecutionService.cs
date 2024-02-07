@@ -33,8 +33,17 @@ namespace MetaExchange.Common.Services
             decimal amountTracker = requestedBTCAmount;
             decimal totalCostEUR = 0;
 
-            var sortedAsks = exchanges.SelectMany(exchange => exchange.OrderBook.Asks.Select(ask => new { Exchange = exchange.Identifier, Ask = ask })) // give each bid an exchange identifier
-                    .OrderBy(ask => ask.Ask.Price).ToList();
+            var sortedAsks = exchanges
+                .Where(exchange => exchange.OrderBook?.Asks != null && exchange.OrderBook.Asks.Any())
+                .SelectMany(exchange => exchange.OrderBook.Asks.Select(ask => new { Exchange = exchange.Identifier, Ask = ask }))
+                .OrderBy(ask => ask.Ask.Price)
+                .ToList();
+
+            if (!sortedAsks.Any())
+            {
+                tradeResult.ErrorMessage = "No asks available.";
+                return tradeResult;
+            }
 
             foreach (var ask in sortedAsks)
             {
