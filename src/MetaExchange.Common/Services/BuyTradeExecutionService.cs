@@ -35,7 +35,7 @@ namespace MetaExchange.Common.Services
 
             var sortedAsks = exchanges
                 .Where(exchange => exchange.OrderBook?.Asks != null && exchange.OrderBook.Asks.Any())
-                .SelectMany(exchange => exchange.OrderBook.Asks.Select(ask => new { Exchange = exchange.Identifier, Ask = ask }))
+                .SelectMany(exchange => exchange.OrderBook.Asks.Select(askWrapper => new { Exchange = exchange.Identifier, Ask = askWrapper.Order }))
                 .OrderBy(ask => ask.Ask.Price)
                 .ToList();
 
@@ -71,8 +71,8 @@ namespace MetaExchange.Common.Services
                         Exchange = exchange.Identifier,
                         Action = "Buy",
                         RequestedBTCAmount = maxBTC,
-                        PricePerBTC = ask.Ask.Price,
-                        TotalCostEUR = costEUR
+                        PricePerBTC = Math.Round(ask.Ask.Price, 2),
+                        TotalCostEUR = Math.Round(costEUR, 2)
                     });
 
                     tradeResult.Success = true;
@@ -80,8 +80,9 @@ namespace MetaExchange.Common.Services
             }
 
             // Summary
-            tradeResult.Summary.BTCVolume = requestedBTCAmount - amountTracker;
+            tradeResult.Summary.BTCVolume = Math.Round(requestedBTCAmount - amountTracker, 8);
             tradeResult.Summary.TotalEUR = Math.Round(totalCostEUR, 2);
+            // will keep the average price more specific
             tradeResult.Summary.AverageBTCPrice = tradeResult.Summary.BTCVolume > 0 ? totalCostEUR / tradeResult.Summary.BTCVolume : 0;
 
             if (amountTracker > 0)

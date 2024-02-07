@@ -35,10 +35,10 @@ namespace MetaExchange.Common.Services
             decimal totalReceivedEUR = 0;
 
             var sortedBids = exchanges
-              .Where(exchange => exchange.OrderBook?.Bids != null && exchange.OrderBook.Bids.Any())
-              .SelectMany(exchange => exchange.OrderBook.Bids.Select(bid => new { Exchange = exchange.Identifier, Bid = bid }))
-              .OrderByDescending(bid => bid.Bid.Price)
-              .ToList();
+                .Where(exchange => exchange.OrderBook?.Bids != null && exchange.OrderBook.Bids.Any())
+                .SelectMany(exchange => exchange.OrderBook.Bids.Select(bidWrapper => new { Exchange = exchange.Identifier, Bid = bidWrapper.Order }))
+                .OrderByDescending(bid => bid.Bid.Price) 
+                .ToList();
 
             if (!sortedBids.Any())
             {
@@ -70,15 +70,15 @@ namespace MetaExchange.Common.Services
                         Exchange = exchange.Identifier,
                         Action = "Sell",
                         RequestedBTCAmount = sellableBTC,
-                        PricePerBTC = bid.Bid.Price,
-                        TotalCostEUR = receivedEUR
+                        PricePerBTC = Math.Round(bid.Bid.Price, 2),
+                        TotalCostEUR = Math.Round(receivedEUR, 2)
                     });
 
                     tradeResult.Success = true;
                 }
             }
 
-            tradeResult.Summary.BTCVolume = Math.Round(amountBTC - amountTracker, 6); // rounding to 6 decimal places if there would be too many decimal places
+            tradeResult.Summary.BTCVolume = Math.Round(amountBTC - amountTracker, 8); // rounding to 8 decimal places if there would be too many decimal places
             tradeResult.Summary.TotalEUR = Math.Round(totalReceivedEUR, 2);
             tradeResult.Summary.AverageBTCPrice = tradeResult.Summary.BTCVolume > 0 ? totalReceivedEUR / tradeResult.Summary.BTCVolume : 0;
 
