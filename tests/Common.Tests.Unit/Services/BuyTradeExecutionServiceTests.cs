@@ -100,14 +100,18 @@
                     },
                     OrderBook = new OrderBook
                     {
-                        Asks = new List<Order>
+                        Asks = new List<OrderWrapper>
                         {
-                            new Order
+                            new OrderWrapper
                             {
-                                Type = "Sell",
-                                Price = 10000m,
-                                Amount = 1.0m
+                                Order = new Order
+                                {
+                                    Type = "Sell",
+                                    Price = 10000m,
+                                    Amount = 1.0m
+                                }
                             }
+
                         }
                     }
                 }
@@ -138,13 +142,16 @@
                     },
                     OrderBook = new OrderBook
                     {
-                        Asks = new List<Order>
+                        Asks = new List<OrderWrapper>
                         {
-                            new Order
+                            new OrderWrapper
                             {
-                                Type = "Sell",
-                                Price = 10000m,
-                                Amount = 1.0m
+                                Order = new Order
+                                {
+                                    Type = "Sell",
+                                    Price = 10000m,
+                                    Amount = 1.0m
+                                }
                             }
                         }
                     }
@@ -185,19 +192,26 @@
                     },
                     OrderBook = new OrderBook
                     {
-                        Asks = new List<Order>
+                        Asks = new List<OrderWrapper>
                         {
-                            new Order
+                            new OrderWrapper
                             {
-                                Type = "Sell",
-                                Price = priceA,
-                                Amount = 0.5m
+                                Order = new Order
+                                {
+                                    Type = "Sell",
+                                    Price = priceA,
+                                    Amount = 0.5m
+                                },
+
                             },
-                            new Order
+                            new OrderWrapper
                             {
-                                Type = "Sell",
-                                Price = priceB,
-                                Amount = 0.5m
+                                Order = new Order
+                                {
+                                    Type = "Sell",
+                                    Price = priceB,
+                                    Amount = 0.5m
+                                }
                             }
                         }
                     }
@@ -235,19 +249,25 @@
                     },
                     OrderBook = new OrderBook
                     {
-                        Asks = new List<Order>
+                        Asks = new List<OrderWrapper>
                         {
-                            new Order
+                            new OrderWrapper
                             {
-                                Type = "Sell",
-                                Price = 10000m,
-                                Amount = 1.0m
+                                Order = new Order
+                                {
+                                    Type = "Sell",
+                                    Price = 10000m,
+                                    Amount = 1.0m
+                                }
                             },
-                            new Order
+                            new OrderWrapper
                             {
-                                Type = "Sell",
-                                Price = 9000m,
-                                Amount = 1.0m
+                                Order = new Order
+                                {
+                                    Type = "Sell",
+                                    Price = 9000m,
+                                    Amount = 1.0m
+                                }
                             }
                         }
                     }
@@ -283,13 +303,16 @@
                     },
                     OrderBook = new OrderBook
                     {
-                        Bids = new List<Order>
+                        Bids = new List<OrderWrapper>
                         {
-                            new Order
+                            new OrderWrapper
                             {
-                                Type = "Sell",
-                                Price = 10000m,
-                                Amount = 1.0m
+                                Order = new Order
+                                {
+                                    Type = "Buy",
+                                    Price = 10000m,
+                                    Amount = 1.0m
+                                }
                             }
                         }
                     }
@@ -321,22 +344,28 @@
                     },
                     OrderBook = new OrderBook
                     {
-                        Bids = new List<Order>
+                        Bids = new List<OrderWrapper>
                         {
-                            new Order
+                            new OrderWrapper
                             {
-                                Type = "Buy",
-                                Price = 10000m,
-                                Amount = 1.0m
+                                Order = new Order
+                                {
+                                    Type = "Buy",
+                                    Price = 10000m,
+                                    Amount = 1.0m
+                                }
                             }
                         },
-                        Asks = new List<Order>
+                        Asks = new List<OrderWrapper>
                         {
-                            new Order
+                            new OrderWrapper
                             {
-                                Type = "Sell",
-                                Price = 9000m,
-                                Amount = 1.0m
+                                Order = new Order
+                                {
+                                    Type = "Sell",
+                                    Price = 9000m,
+                                    Amount = 1.0m
+                                }
                             }
                         }
                     }
@@ -372,13 +401,16 @@
                     },
                     OrderBook = new OrderBook
                     {
-                        Asks = new List<Order>
+                        Asks = new List<OrderWrapper>
                         {
-                            new Order
+                            new OrderWrapper
                             {
-                                Type = "Sell",
-                                Price = 10000m,
-                                Amount = 1.0m
+                                Order = new Order
+                                {
+                                    Type = "Sell",
+                                    Price = 10000m,
+                                    Amount = 1.0m
+                                }
                             }
                         }
                     }
@@ -393,13 +425,16 @@
                     },
                     OrderBook = new OrderBook
                     {
-                        Asks = new List<Order>
+                        Asks = new List<OrderWrapper>
                         {
-                            new Order
+                            new OrderWrapper
                             {
-                                Type = "Sell",
-                                Price = 9000m,
-                                Amount = 1.0m
+                                Order = new Order
+                                {
+                                    Type = "Sell",
+                                    Price = 9000m,
+                                    Amount = 1.0m
+                                }
                             }
                         }
                     }
@@ -435,13 +470,16 @@
                     },
                     OrderBook = new OrderBook
                     {
-                        Asks = new List<Order>
+                        Asks = new List<OrderWrapper>
                         {
-                            new Order
+                            new OrderWrapper
                             {
-                                Type = "Sell",
-                                Price = 10000m,
-                                Amount = 1.0m
+                                Order = new Order
+                                {
+                                    Type = "Sell",
+                                    Price = 10000m,
+                                    Amount = 1.0m
+                                }
                             }
                         }
                     }
@@ -456,13 +494,16 @@
                     },
                     OrderBook = new OrderBook
                     {
-                        Asks = new List<Order>
+                        Asks = new List<OrderWrapper>
                         {
-                            new Order
+                            new OrderWrapper
                             {
-                                Type = "Sell",
-                                Price = 9000m,
-                                Amount = 1.0m
+                                Order = new Order
+                                {
+                                    Type = "Sell",
+                                    Price = 9000m,
+                                    Amount = 1.0m
+                                }
                             }
                         }
                     }
@@ -502,31 +543,43 @@
                     },
                     OrderBook = new OrderBook
                     {
-                        Asks = new List<Order>
+                        Asks = new List<OrderWrapper>
                         {
-                            new Order
+                            new OrderWrapper
                             {
-                                Type = "Sell",
-                                Price = 8000m,
-                                Amount = 0.2m
+                                Order = new Order
+                                {
+                                    Type = "Sell",
+                                    Price = 8000m,
+                                    Amount = 0.2m
+                                }
                             },
-                            new Order
+                            new OrderWrapper
                             {
-                                Type = "Sell",
-                                Price = 9000m,
-                                Amount = 0.2m
+                                Order = new Order
+                                {
+                                    Type = "Sell",
+                                    Price = 9000m,
+                                    Amount = 0.2m
+                                }
                             },
-                            new Order
+                            new OrderWrapper
                             {
-                                Type = "Sell",
-                                Price = 10000m,
-                                Amount = 0.2m
+                                Order = new Order
+                                {
+                                    Type = "Sell",
+                                    Price = 10000m,
+                                    Amount = 0.2m
+                                }
                             },
-                            new Order
+                            new OrderWrapper
                             {
-                                Type = "Sell",
-                                Price = 11000m,
-                                Amount = 0.2m
+                                Order = new Order
+                                {
+                                    Type = "Sell",
+                                    Price = 11000m,
+                                    Amount = 0.2m
+                                }
                             }
                         }
                     }
@@ -559,19 +612,25 @@
                     },
                     OrderBook = new OrderBook
                     {
-                        Asks = new List<Order>
+                        Asks = new List<OrderWrapper>
                         {
-                            new Order
+                            new OrderWrapper
                             {
-                                Type = "Sell",
-                                Price = 8000m,
-                                Amount = 0.5m
+                                Order = new Order
+                                {
+                                    Type = "Sell",
+                                    Price = 8000m,
+                                    Amount = 0.5m
+                                }
                             },
-                            new Order
+                            new OrderWrapper
                             {
-                                Type = "Sell",
-                                Price = 10000m,
-                                Amount = 0.5m
+                                Order = new Order
+                                {
+                                    Type = "Sell",
+                                    Price = 10000m,
+                                    Amount = 0.5m
+                                }
                             }
                         }
                     }
@@ -586,13 +645,16 @@
                     },
                     OrderBook = new OrderBook
                     {
-                        Asks = new List<Order>
+                        Asks = new List<OrderWrapper>
                         {
-                            new Order
+                            new OrderWrapper
                             {
-                                Type = "Sell",
-                                Price = 9000m,
-                                Amount = 1.0m
+                                Order = new Order
+                                {
+                                    Type = "Sell",
+                                    Price = 9000m,
+                                    Amount = 1.0m
+                                }
                             }
                         }
                     }
@@ -628,13 +690,16 @@
                     },
                     OrderBook = new OrderBook
                     {
-                        Asks = new List<Order>
+                        Asks = new List<OrderWrapper>
                         {
-                            new Order
+                            new OrderWrapper
                             {
-                                Type = "Sell",
-                                Price = 10000m,
-                                Amount = 0.5m
+                                Order = new Order
+                                {
+                                    Type = "Sell",
+                                    Price = 10000m,
+                                    Amount = 0.5m
+                                }
                             }
                         }
                     }
@@ -666,14 +731,17 @@
                     },
                     OrderBook = new OrderBook
                     {
-                        Asks = new List<Order>
+                        Asks = new List<OrderWrapper>
                         {
-                            new Order
+                            new OrderWrapper
                             {
-                                Type = "Sell",
-                                Price = 10000m,
-                                Amount = 1.0m
-                            }
+                                Order = new Order
+                                {
+                                    Type = "Sell",
+                                    Price = 10000m,
+                                    Amount = 1.0m
+                                }
+                            }   
                         }
                     }
                 }
@@ -705,13 +773,16 @@
                     },
                     OrderBook = new OrderBook
                     {
-                        Asks = new List<Order>
+                        Asks = new List<OrderWrapper>
                         {
-                            new Order
+                            new OrderWrapper
                             {
-                                Type = "Sell",
-                                Price = 10000m,
-                                Amount = 2m
+                                Order = new Order
+                                {
+                                    Type = "Sell",
+                                    Price = 10000m,
+                                    Amount = 2m
+                                }
                             }
                         }
                     }
@@ -743,13 +814,16 @@
                     },
                     OrderBook = new OrderBook
                     {
-                        Asks = new List<Order>
+                        Asks = new List<OrderWrapper>
                         {
-                            new Order
+                            new OrderWrapper
                             {
-                                Type = "Sell",
-                                Price = 10000m,
-                                Amount = 2m
+                                Order = new Order
+                                {
+                                    Type = "Sell",
+                                    Price = 10000m,
+                                    Amount = 2m
+                                }
                             }
                         }
                     }
@@ -764,13 +838,16 @@
                     },
                     OrderBook = new OrderBook
                     {
-                        Asks = new List<Order>
+                        Asks = new List<OrderWrapper>
                         {
-                            new Order
+                            new OrderWrapper
                             {
-                                Type = "Sell",
-                                Price = 10000m,
-                                Amount = 2m
+                                Order = new Order
+                                {
+                                    Type = "Sell",
+                                    Price = 10000m,
+                                    Amount = 2m
+                                }
                             }
                         }
                     }
@@ -807,13 +884,16 @@
                     },
                     OrderBook = new OrderBook
                     {
-                        Asks = new List<Order>
+                        Asks = new List<OrderWrapper>
                         {
-                            new Order
+                            new OrderWrapper
                             {
-                                Type = "Sell",
-                                Price = 10000m,
-                                Amount = 1.0m
+                                Order = new Order
+                                {
+                                    Type = "Sell",
+                                    Price = 10000m,
+                                    Amount = 1.0m
+                                }
                             }
                         }
                     }
