@@ -5,8 +5,16 @@ namespace MetaExchange.Common.Services
 {
     public class SellTradeExecutionService : ISellTradeExecutionService
     {
-        public TradeOrderResult ExecuteSellOrder(decimal amountBTC, IEnumerable<Exchange> exchanges)
+        private readonly IExchangeDataContextService _seedExecutionData;
+
+        public SellTradeExecutionService(IExchangeDataContextService seedExecutionData)
         {
+            _seedExecutionData = seedExecutionData;
+        }
+
+        public async Task<TradeOrderResult> ExecuteSellOrderAsync(decimal amountBTC)
+        {
+            var exchanges = await _seedExecutionData.GetExchangeDataAsync();
             // Since this is very similar to buying, I could have made it a single method with a parameter for the order type,
             // but I decided to keep them separate for clarity and to make the tests separate tests for buying and selling, plus it's easier to read and understand.
             var tradeResult = new TradeOrderResult

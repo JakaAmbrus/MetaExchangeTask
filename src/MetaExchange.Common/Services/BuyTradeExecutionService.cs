@@ -5,8 +5,16 @@ namespace MetaExchange.Common.Services
 {
     public class BuyTradeExecutionService : IBuyTradeExecutionService
     {
-        public TradeOrderResult ExecuteBuyOrder(decimal requestedBTCAmount, IEnumerable<Exchange> exchanges)
+        private readonly IExchangeDataContextService _seedExecutionData;
+
+        public BuyTradeExecutionService(IExchangeDataContextService seedExecutionData)
         {
+            _seedExecutionData = seedExecutionData;
+        }
+        public async Task<TradeOrderResult> ExecuteBuyOrderAsync(decimal requestedBTCAmount)
+        {
+            var exchanges = await _seedExecutionData.GetExchangeDataAsync();
+
             // At first only the type and amount of BTC are set, with the success flag set to true, that changes to true if the order is fulfilled
             var tradeResult = new TradeOrderResult
             {
