@@ -4,6 +4,6 @@ namespace MetaExchange.Common.Interfaces
 {
     public interface ISellTradeExecutionService
     {
-        Task<TradeOrderResult> ExecuteBuyOrderAsync(decimal amountBTC, IEnumerable<Exchange> exchanges);
+        TradeOrderResult ExecuteSellOrder(decimal amountBTC, IEnumerable<Exchange> exchanges);
     }
 }
