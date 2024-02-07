@@ -8,7 +8,7 @@ namespace MetaExchange.Common.Services
         public TradeOrderResult ExecuteSellOrder(decimal amountBTC, IEnumerable<Exchange> exchanges)
         {
             // Since this is very similar to buying, I could have made it a single method with a parameter for the order type,
-            // but I decided to keep them separate for clarity and to make the tests separate tests for buying and selling.
+            // but I decided to keep them separate for clarity and to make the tests separate tests for buying and selling, plus it's easier to read and understand.
             var tradeResult = new TradeOrderResult
             {
                 OrderType = "Sell",
@@ -55,14 +55,14 @@ namespace MetaExchange.Common.Services
 
                 var exchange = exchanges.First(e => e.Identifier == bid.Exchange);
 
-                if (exchange.Balances.BTC >= amountTracker) // if the exchange has enough BTC to sell
+                var sellableBTC = Math.Min(amountTracker, Math.Min(exchange.Balances.BTC, bid.Bid.Amount));
+                if (sellableBTC > 0) // If there's BTC that can be sold
                 {
-                    var sellableBTC = Math.Min(amountTracker, bid.Bid.Amount);
                     var receivedEUR = sellableBTC * bid.Bid.Price;
 
-                    exchange.Balances.BTC -= sellableBTC;
-                    exchange.Balances.EUR += receivedEUR;
-                    amountTracker -= sellableBTC;
+                    exchange.Balances.BTC -= sellableBTC; 
+                    exchange.Balances.EUR += receivedEUR; 
+                    amountTracker -= sellableBTC; 
                     totalReceivedEUR += receivedEUR;
 
                     tradeResult.Execution.Add(new TradeDetails
@@ -78,7 +78,7 @@ namespace MetaExchange.Common.Services
                 }
             }
 
-            tradeResult.Summary.BTCVolume = amountBTC - amountTracker;
+            tradeResult.Summary.BTCVolume = Math.Round(amountBTC - amountTracker, 6); // rounding to 6 decimal places if there would be too many decimal places
             tradeResult.Summary.TotalEUR = Math.Round(totalReceivedEUR, 2);
             tradeResult.Summary.AverageBTCPrice = tradeResult.Summary.BTCVolume > 0 ? totalReceivedEUR / tradeResult.Summary.BTCVolume : 0;
 
