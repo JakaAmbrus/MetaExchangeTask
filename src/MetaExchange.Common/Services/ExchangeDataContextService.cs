@@ -4,16 +4,17 @@ using System.Text.Json;
 
 namespace MetaExchange.Common.Services
 {
+    // This class is used to read the exchange data from the DB.json file, purely for demonstration purposes
     public class ExchangeDataContextService : IExchangeDataContextService
     {
-        private const string _dataFilePath = "Data/DB.json";
-
         public async Task<IEnumerable<Exchange>> GetExchangeDataAsync()
         {
-            var fullPath = Path.GetFullPath(_dataFilePath, Directory.GetCurrentDirectory());
+            var fullPath = Path.Combine(AppContext.BaseDirectory, "Data", "DB.json");
 
-            using var stream = File.OpenRead(fullPath);
-            return await JsonSerializer.DeserializeAsync<IEnumerable<Exchange>>(stream) ?? new List<Exchange>();
+            await using var stream = File.OpenRead(fullPath);
+            var exchanges = await JsonSerializer.DeserializeAsync<List<Exchange>>(stream);
+
+            return exchanges;
         }
     }
 }
