@@ -14,34 +14,26 @@ namespace MetaExchange.API.Controllers
     {
         private readonly IBuyTradeExecutionService _buyExecutionService;
         private readonly ISellTradeExecutionService _sellExecutionService;
-        private readonly IExchangeDataContextService _seedExecutionData;
 
         public TradeController(IBuyTradeExecutionService buyExecutionService,
-            ISellTradeExecutionService sellExecutionService,
-            IExchangeDataContextService seedExecutionData)
+            ISellTradeExecutionService sellExecutionService)
         {
             _buyExecutionService = buyExecutionService;
             _sellExecutionService = sellExecutionService;
-            _seedExecutionData = seedExecutionData;
         }
 
         [HttpPost("execute")]
         public async Task<IActionResult> ExecuteTrade([FromBody] TradeRequestDto request)
         {
-            // Here I would just like to point out that I am passing in the exchange data as parameter
-            // due to the assignment scope and requirements, this is in no way a representation
-            // of passing in a database context to a service, which is a bad practice.
-            var exchanges = await _seedExecutionData.GetExchangeDataAsync();
-
             TradeOrderResult result;
 
             switch (request.OrderType.ToLower())
             {
                 case "buy":
-                    result = _buyExecutionService.ExecuteBuyOrder(request.Amount, exchanges);
+                    result = await _buyExecutionService.ExecuteBuyOrderAsync(request.Amount);
                     break;
                 case "sell":
-                    result = _sellExecutionService.ExecuteSellOrder(request.Amount, exchanges);
+                    result = await _sellExecutionService.ExecuteSellOrderAsync(request.Amount);
                     break;
                 default:
                     return BadRequest("Order type must be either 'buy' or 'sell'.");

@@ -2,7 +2,6 @@
 using MetaExchange.Common.Models;
 using MetaExchange.Common.Services;
 using Microsoft.Extensions.DependencyInjection;
-using System;
 
 var serviceCollection = new ServiceCollection();
 
@@ -49,20 +48,17 @@ while (!validBtcAmountEntered)
     }
 }
 
-var exchangeDataService = serviceProvider.GetService<IExchangeDataContextService>();
-var exchanges = await exchangeDataService.GetExchangeDataAsync();
-
 TradeOrderResult result = null;
 
 if (orderType == "BUY")
 {
     var buyService = serviceProvider.GetService<IBuyTradeExecutionService>();
-    result = buyService.ExecuteBuyOrder(btcAmount, exchanges);
+    result = await buyService.ExecuteBuyOrderAsync(btcAmount);
 }
 else if (orderType == "SELL")
 {
     var sellService = serviceProvider.GetService<ISellTradeExecutionService>();
-    result = sellService.ExecuteSellOrder(btcAmount, exchanges);
+    result = await sellService.ExecuteSellOrderAsync(btcAmount);
 }
 
 if (result != null && result.Success)
