@@ -3,35 +3,44 @@
     public class SellTradeExecutionServiceTests
     {
         private readonly ISellTradeExecutionService _sellTradeExecutionService;
+        private readonly IExchangeDataContextService _exchangeDataContextService;
 
         public SellTradeExecutionServiceTests()
         {
-            _sellTradeExecutionService = new SellTradeExecutionService();
+            _exchangeDataContextService = Substitute.For<IExchangeDataContextService>();
+            _sellTradeExecutionService = new SellTradeExecutionService(_exchangeDataContextService);
+        }
+
+        public void ConfigureExchangeDataContextService(IEnumerable<Exchange> exchanges)
+        {
+            _exchangeDataContextService.GetExchangeDataAsync().Returns(Task.FromResult(exchanges));
         }
 
         [Fact]
-        public void ExecuteSellOrder_ShouldReturnTradeOrderResult_WhenCalled()
+        public async Task ExecuteSellOrderAsync_ShouldReturnTradeOrderResult_WhenCalled()
         {
             // Arrange
             var amountBTC = 1.0m;
             var exchanges = new List<Exchange> { };
+            ConfigureExchangeDataContextService(exchanges);
 
             // Act
-            var result = _sellTradeExecutionService.ExecuteSellOrder(amountBTC, exchanges);
+            var result = await _sellTradeExecutionService.ExecuteSellOrderAsync(amountBTC);
 
             // Assert
             result.Should().BeOfType<TradeOrderResult>();
         }
 
         [Fact]
-        public void ExecuteSellOrder_ShouldHaveCorrectAmountAndBuyOrderType_WhenCalled()
+        public async Task ExecuteSellOrderAsync_ShouldHaveCorrectAmountAndBuyOrderType_WhenCalled()
         {
             // Arrange
             var amountBTC = 1.0m;
             var exchanges = new List<Exchange> { };
+            ConfigureExchangeDataContextService(exchanges);
 
             // Act
-            var result = _sellTradeExecutionService.ExecuteSellOrder(amountBTC, exchanges);
+            var result = await _sellTradeExecutionService.ExecuteSellOrderAsync(amountBTC);
 
             // Assert
             result.OrderType.Should().Be("Sell");
@@ -41,64 +50,68 @@
         [Theory]
         [InlineData(0)]
         [InlineData(-1)]
-        public void ExecuteSellOrder_ShouldReturnErrorMessage_WhenRequestedBTCAmountIsInvalid(
+        public async Task ExecuteSellOrderAsync_ShouldReturnErrorMessage_WhenRequestedBTCAmountIsInvalid(
             decimal amount)
         {
             // Arrange
             var amountBTC = amount;
             var exchanges = new List<Exchange> { };
+            ConfigureExchangeDataContextService(exchanges);
 
             // Act
-            var result = _sellTradeExecutionService.ExecuteSellOrder(amountBTC, exchanges);
+            var result = await _sellTradeExecutionService.ExecuteSellOrderAsync(amountBTC);
 
             // Assert
             result.ErrorMessage.Should().Be("Invalid BTC amount requested.");
         }
 
         [Fact]
-        public void ExecuteSellOrder_ShouldReturnErrorMessage_WhenNoExchangesAvailable()
+        public async Task ExecuteSellOrderAsync_ShouldReturnErrorMessage_WhenNoExchangesAvailable()
         {
             // Arrange
             var amountBTC = 1.0m;
             var exchanges = new List<Exchange> { };
+            ConfigureExchangeDataContextService(exchanges);
 
             // Act
-            var result = _sellTradeExecutionService.ExecuteSellOrder(amountBTC, exchanges);
+            var result = await _sellTradeExecutionService.ExecuteSellOrderAsync(amountBTC);
 
             // Assert
             result.ErrorMessage.Should().Be("No exchanges available.");
         }
 
         [Fact]
-        public void ExecuteSellOrder_ShouldReturnTradeOrderResultWithSuccessFalse_WhenNoExchangesAvailable()
+        public async Task ExecuteSellOrderAsync_ShouldReturnTradeOrderResultWithSuccessFalse_WhenNoExchangesAvailable()
         {
             // Arrange
             var amountBTC = 1.0m;
             var exchanges = new List<Exchange> { };
+            ConfigureExchangeDataContextService(exchanges);
 
             // Act
-            var result = _sellTradeExecutionService.ExecuteSellOrder(amountBTC, exchanges);
+            var result = await _sellTradeExecutionService.ExecuteSellOrderAsync(amountBTC);
 
             // Assert
             result.Success.Should().BeFalse();
         }
 
         [Fact]
-        public void ExecuteSellOrder_ShouldReturnErrorMessage_WhenExchangesIsNull()
+        public async Task ExecuteSellOrderAsync_ShouldReturnErrorMessage_WhenExchangesIsNull()
         {
             // Arrange
             var amountBTC = 1.0m;
             List<Exchange>? exchanges = null;
+            ConfigureExchangeDataContextService(exchanges);
 
             // Act
-            var result = _sellTradeExecutionService.ExecuteSellOrder(amountBTC, exchanges);
+            var result = await _sellTradeExecutionService.ExecuteSellOrderAsync(amountBTC);
 
             // Assert
             result.ErrorMessage.Should().Be("No exchanges available.");
         }
 
         [Fact]
-        public void ExecuteSellOrder_ShouldSellTheRequestedBTCAmount_WhenTheConditionsAreMet()
+        public async Task ExecuteSellOrderAsync_ShouldSellTheRequestedBTCAmount_WhenTheConditionsAreMet()
         {
             // Arrange
             var amountBTC = 1.0m;
@@ -128,9 +141,10 @@
                     }
                 }
             };
+            ConfigureExchangeDataContextService(exchanges);
 
             // Act
-            var result = _sellTradeExecutionService.ExecuteSellOrder(amountBTC, exchanges);
+            var result = await _sellTradeExecutionService.ExecuteSellOrderAsync(amountBTC);
 
             // Assert
             result.Success.Should().BeTrue();
@@ -138,7 +152,7 @@
         }
 
         [Fact]
-        public void ExecuteSellOrder_ShouldReturnExecutionTradeDetails_WhenTheConditionsAreMet()
+        public async Task ExecuteSellOrderAsync_ShouldReturnExecutionTradeDetails_WhenTheConditionsAreMet()
         {
             // Arrange
             var amountBTC = 1.0m;
@@ -168,9 +182,10 @@
                     }
                 }
             };
+            ConfigureExchangeDataContextService(exchanges);
 
             // Act
-            var result = _sellTradeExecutionService.ExecuteSellOrder(amountBTC, exchanges);
+            var result = await _sellTradeExecutionService.ExecuteSellOrderAsync(amountBTC);
 
             // Assert
             result.Execution.Should().HaveCount(1);
@@ -186,7 +201,7 @@
         [InlineData(2956.116, 2953.245)]
         [InlineData(2956.116, 2953.246)]
         [InlineData(2956.116, 2953.249)]
-        public void ExecuteSellOrder_ShouldReturnTotalEURSalesWithinTwoDecimals_WhenTheConditionsAreMet(
+        public async Task ExecuteSellOrderAsync_ShouldReturnTotalEURSalesWithinTwoDecimals_WhenTheConditionsAreMet(
             decimal priceA, decimal priceB)
         {
             // Arrange
@@ -225,12 +240,13 @@
                     }
                 }
             };
+            ConfigureExchangeDataContextService(exchanges);
 
             decimal correctTotalCost = priceA * 0.5m + priceB * 0.5m;
             decimal correctTotalCostRounded = Math.Round(correctTotalCost, 2);
 
             // Act
-            var result = _sellTradeExecutionService.ExecuteSellOrder(amountBTC, exchanges);
+            var result = await _sellTradeExecutionService.ExecuteSellOrderAsync(amountBTC);
 
             // Assert
             result.Success.Should().BeTrue();
@@ -241,7 +257,7 @@
         }
 
         [Fact]
-        public void ExecuteSellOrder_ShouldBuyTheBestOffers_WhenBidHasBetterPrice()
+        public async Task ExecuteSellOrderAsync_ShouldBuyTheBestOffers_WhenBidHasBetterPrice()
         {
             // Arrange
             var amountBTC = 1.0m;
@@ -279,9 +295,10 @@
                     }
                 }
             };
+            ConfigureExchangeDataContextService(exchanges);
 
             // Act
-            var result = _sellTradeExecutionService.ExecuteSellOrder(amountBTC, exchanges);
+            var result = await _sellTradeExecutionService.ExecuteSellOrderAsync(amountBTC);
 
             // Assert
             result.Success.Should().BeTrue();
@@ -291,7 +308,7 @@
         }
 
         [Fact]
-        public void ExecuteSellOrder_ShouldIgnoreOrdersOfBuyType_WhenThereAreNoBids()
+        public async Task ExecuteSellOrderAsync_ShouldIgnoreOrdersOfBuyType_WhenThereAreNoBids()
         {
             // Arrange
             var amountBTC = 1.0m;
@@ -321,9 +338,10 @@
                     }
                 }
             };
+            ConfigureExchangeDataContextService(exchanges);
 
             // Act
-            var result = _sellTradeExecutionService.ExecuteSellOrder(amountBTC, exchanges);
+            var result = await _sellTradeExecutionService.ExecuteSellOrderAsync(amountBTC);
 
             // Assert
             result.Success.Should().BeFalse();
@@ -331,7 +349,7 @@
         }
 
         [Fact]
-        public void ExecuteSellOrder_ShouldIgnoreOrdersOfBuyTypeAndSellCorrectAmount_WhenThereAreBidsAndAsks()
+        public async Task ExecuteSellOrderAsync_ShouldIgnoreOrdersOfBuyTypeAndSellCorrectAmount_WhenThereAreBidsAndAsks()
         {
             // Arrange
             var amountBTC = 1.0m;
@@ -372,9 +390,10 @@
                     }
                 }
             };
+            ConfigureExchangeDataContextService(exchanges);
 
             // Act
-            var result = _sellTradeExecutionService.ExecuteSellOrder(amountBTC, exchanges);
+            var result = await _sellTradeExecutionService.ExecuteSellOrderAsync(amountBTC);
 
             // Assert
             result.Success.Should().BeTrue();
@@ -384,7 +403,7 @@
         }
 
         [Fact]
-        public void ExecuteSellOrder_ShouldSellToBestOffers_WhenThereIsBetterPriceOnAnotherExchange()
+        public async Task ExecuteSellOrderAsync_ShouldSellToBestOffers_WhenThereIsBetterPriceOnAnotherExchange()
         {
             // Arrange
             var amountBTC = 1.0m;
@@ -437,9 +456,10 @@
                     }
                 }
             };
+            ConfigureExchangeDataContextService(exchanges);
 
             // Act
-            var result = _sellTradeExecutionService.ExecuteSellOrder(amountBTC, exchanges);
+            var result = await _sellTradeExecutionService.ExecuteSellOrderAsync(amountBTC);
 
             // Assert
             result.Success.Should().BeTrue();
@@ -450,7 +470,7 @@
         }
 
         [Fact]
-        public void ExecuteSellOrder_ShouldSellToDifferentBestOffers_WhenTheAmountIsHigherThanTheBestOffer()
+        public async Task ExecuteSellOrderAsync_ShouldSellToDifferentBestOffers_WhenTheAmountIsHigherThanTheBestOffer()
         {
             // Arrange
             var amountBTC = 2.0m;
@@ -503,9 +523,10 @@
                     }
                 }
             };
+            ConfigureExchangeDataContextService(exchanges);
 
             // Act
-            var result = _sellTradeExecutionService.ExecuteSellOrder(amountBTC, exchanges);
+            var result = await _sellTradeExecutionService.ExecuteSellOrderAsync(amountBTC);
 
             // Assert
             result.Success.Should().BeTrue();
@@ -519,7 +540,7 @@
         }
 
         [Fact]
-        public void ExecuteSellOrder_ShouldSellToDifferentBestOffersInSameExchange_WhenAmountNeedsToBeSpreadOut()
+        public async Task ExecuteSellOrderAsync_ShouldSellToDifferentBestOffersInSameExchange_WhenAmountNeedsToBeSpreadOut()
         {
             // Arrange
             var amountBTC = 2.0m;
@@ -557,9 +578,10 @@
                     }
                 }
             };
+            ConfigureExchangeDataContextService(exchanges);
 
             // Act
-            var result = _sellTradeExecutionService.ExecuteSellOrder(amountBTC, exchanges);
+            var result = await _sellTradeExecutionService.ExecuteSellOrderAsync(amountBTC);
 
             // Assert
             result.Success.Should().BeTrue();
@@ -573,7 +595,7 @@
         }
 
         [Fact]
-        public void ExecuteSellOrder_ShouldSellFromDifferentBestOffersInSameExchange_WhenAmountNeedsToBeSpreadOut()
+        public async Task ExecuteSellOrderAsync_ShouldSellFromDifferentBestOffersInSameExchange_WhenAmountNeedsToBeSpreadOut()
         {
             // Arrange
             var amountBTC = 2.0m;
@@ -611,9 +633,10 @@
                     }
                 }
             };
+            ConfigureExchangeDataContextService(exchanges);
 
             // Act
-            var result = _sellTradeExecutionService.ExecuteSellOrder(amountBTC, exchanges);
+            var result = await _sellTradeExecutionService.ExecuteSellOrderAsync(amountBTC);
 
             // Assert
             result.Success.Should().BeTrue();
@@ -627,7 +650,7 @@
         }
 
         [Fact]
-        public void ExecuteSellOrder_ShouldHaveTheRightExchangeOrder_WhenTheBestOrdersChangeBetweenExchanges()
+        public async Task ExecuteSellOrderAsync_ShouldHaveTheRightExchangeOrder_WhenTheBestOrdersChangeBetweenExchanges()
         {
             // Arrange
             var amountBTC = 2.0m;
@@ -688,9 +711,10 @@
                     }
                 }
             };
+            ConfigureExchangeDataContextService(exchanges);
 
             // Act
-            var result = _sellTradeExecutionService.ExecuteSellOrder(amountBTC, exchanges);
+            var result = await _sellTradeExecutionService.ExecuteSellOrderAsync(amountBTC);
 
             // Assert
             result.Success.Should().BeTrue();
@@ -701,7 +725,7 @@
         }
 
         [Fact]
-        public void ExecuteSellOrder_ShouldReturnSuccessFalseAndErrorMessage_WhenOrderIsPartiallyCompleted()
+        public async Task ExecuteSellOrderAsync_ShouldReturnSuccessFalseAndErrorMessage_WhenOrderIsPartiallyCompleted()
         {
             // Arrange
             var amountBTC = 2.0m;
@@ -731,16 +755,18 @@
                     }
                 }
             };
+            ConfigureExchangeDataContextService(exchanges);
 
             // Act
-            var result = _sellTradeExecutionService.ExecuteSellOrder(amountBTC, exchanges);
+            var result = await _sellTradeExecutionService.ExecuteSellOrderAsync(amountBTC);
 
             // Assert
             result.Success.Should().BeFalse();
             result.ErrorMessage.Should().Be("Could only fulfill the order partially. only 1.0BTC sold.");
         }
+
         [Fact]
-        public void ExecuteSellOrder_ShouldFulfillTheOrderPartially_WhenTheExchangesDoNotHaveEnoughBTC()
+        public async Task ExecuteSellOrderAsync_ShouldFulfillTheOrderPartially_WhenTheExchangesDoNotHaveEnoughBTC()
         {
             // Arrange
             var amountBTC = 2.0m;
@@ -770,9 +796,10 @@
                     }
                 }
             };
+            ConfigureExchangeDataContextService(exchanges);
 
             // Act
-            var result = _sellTradeExecutionService.ExecuteSellOrder(amountBTC, exchanges);
+            var result = await _sellTradeExecutionService.ExecuteSellOrderAsync(amountBTC);
 
             // Assert
             result.Success.Should().BeFalse();
@@ -780,7 +807,7 @@
         }
 
         [Fact]
-        public void ExecuteSellOrder_ShouldFulfillTheOrderPartially_WhenExchangeRunsOutOfBalance()
+        public async Task ExecuteSellOrderAsync_ShouldFulfillTheOrderPartially_WhenExchangeRunsOutOfBalance()
         {
             // Arrange
             var amountBTC = 2.0m;
@@ -810,9 +837,10 @@
                     }
                 },
             };
+            ConfigureExchangeDataContextService(exchanges);
 
             // Act
-            var result = _sellTradeExecutionService.ExecuteSellOrder(amountBTC, exchanges);
+            var result = await _sellTradeExecutionService.ExecuteSellOrderAsync(amountBTC);
 
             // Assert
             result.Success.Should().BeFalse();
@@ -820,7 +848,7 @@
         }
 
         [Fact]
-        public void ExecuteSellOrder_ShouldMoveToNextExchange_WhenAnExchangeRunsOutOfBalance()
+        public async Task ExecuteSellOrderAsync_ShouldMoveToNextExchange_WhenAnExchangeRunsOutOfBalance()
         {
             // Arrange
             var amountBTC = 2.0m;
@@ -873,9 +901,10 @@
                     }
                 }
             };
+            ConfigureExchangeDataContextService(exchanges);
 
             // Act
-            var result = _sellTradeExecutionService.ExecuteSellOrder(amountBTC, exchanges);
+            var result = await _sellTradeExecutionService.ExecuteSellOrderAsync(amountBTC);
 
             // Assert
             result.Success.Should().BeTrue();
@@ -887,7 +916,7 @@
         }
 
         [Fact]
-        public void ExecuteSellOrder_ShouldReturnSpecificErrorMessage_WhenTheExchangesDoNotHaveEnoughBTC()
+        public async Task ExecuteSellOrderAsync_ShouldReturnSpecificErrorMessage_WhenTheExchangesDoNotHaveEnoughBTC()
         {
             // Arrange
             var amountBTC = 2.0m;
@@ -917,9 +946,10 @@
                     }
                 }
             };
+            ConfigureExchangeDataContextService(exchanges);
 
             // Act
-            var result = _sellTradeExecutionService.ExecuteSellOrder(amountBTC, exchanges);
+            var result = await _sellTradeExecutionService.ExecuteSellOrderAsync(amountBTC);
 
             // Assert
             result.ErrorMessage.Should().Be("Could not fulfill the order.");
