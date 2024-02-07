@@ -28,4 +28,8 @@
     <ProjectReference Include="..\..\src\MetaExchange.Common\MetaExchange.Common.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="TestSeedData\" />
+  </ItemGroup>
+
 </Project>
